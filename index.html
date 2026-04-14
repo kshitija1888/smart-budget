@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Smart Budget — Financial Independence</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+/* ===== RESET & BASE ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pink:#D4537E;--pink-l:#FBEAF0;--pink-m:#ED93B1;--pink-d:#72243E;
+  --teal:#1D9E75;--teal-l:#E1F5EE;--teal-m:#5DCAA5;
+  --amber:#BA7517;--amber-l:#FAEEDA;--amber-m:#EF9F27;
+  --purple:#7F77DD;--purple-l:#EEEDFE;--purple-m:#AFA9EC;
+  --coral:#D85A30;--coral-l:#FAECE7;
+  --blue:#378ADD;--blue-l:#E6F1FB;
+  --bg:#F7F5FC;--surface:#fff;--surface2:#F0EEF8;
+  --text:#2C2C2A;--text2:#5F5E5A;--text3:#888780;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.15);
+  --radius:14px;--radius-sm:9px;--radius-xs:6px;
+  --shadow:0 1px 4px rgba(0,0,0,0.07),0 4px 16px rgba(0,0,0,0.04);
+  --ff:'DM Sans',sans-serif;--ffs:'DM Serif Display',serif;
+  --transition:.18s ease;
+}
+[data-theme="dark"]{
+  --bg:#13121A;--surface:#1E1D28;--surface2:#272636;
+  --text:#E8E6E0;--text2:#B4B2A9;--text3:#888780;
+  --border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.16);
+  --pink-l:#4B1528;--teal-l:#04342C;--amber-l:#412402;--purple-l:#26215C;--blue-l:#042C53;--coral-l:#4A1B0C;
+  --shadow:0 1px 4px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.2);
+}
+html,body{height:100%;font-family:var(--ff);background:var(--bg);color:var(--text);font-size:14px;line-height:1.5;transition:background var(--transition),color var(--transition)}
+button,input,select,textarea{font-family:var(--ff)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* ===== SCREENS ===== */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+
+/* ===== AUTH PAGES ===== */
+.auth-screen{align-items:center;justify-content:center;background:var(--bg);padding:1rem}
+.auth-bg{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.auth-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18}
+.auth-blob.b1{width:500px;height:500px;background:var(--pink);top:-120px;right:-100px}
+.auth-blob.b2{width:400px;height:400px;background:var(--purple);bottom:-80px;left:-80px}
+.auth-blob.b3{width:300px;height:300px;background:var(--teal);bottom:100px;right:200px}
+.auth-card{position:relative;z-index:1;background:var(--surface);border:0.5px solid var(--border);border-radius:20px;padding:2.5rem;width:100%;max-width:440px;box-shadow:var(--shadow)}
+.auth-logo{text-align:center;margin-bottom:2rem}
+.auth-logo-icon{width:48px;height:48px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:14px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:22px;margin-bottom:.75rem}
+.auth-logo h1{font-family:var(--ffs);font-size:26px;font-weight:400}
+.auth-logo h1 span{color:var(--pink)}
+.auth-logo p{font-size:13px;color:var(--text3);margin-top:2px}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:12px;font-weight:500;color:var(--text2);margin-bottom:5px;letter-spacing:.03em}
+.form-group input,.form-group select{width:100%;padding:10px 14px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;outline:none;transition:border-color var(--transition),box-shadow var(--transition)}
+.form-group input:focus,.form-group select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(212,83,126,.12)}
+.form-group select{cursor:pointer}
+.btn-primary{width:100%;padding:11px;background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;transition:opacity var(--transition),transform var(--transition);margin-top:.5rem}
+.btn-primary:hover{opacity:.88}
+.btn-primary:active{transform:scale(.98)}
+.auth-switch{text-align:center;font-size:13px;color:var(--text3);margin-top:1.25rem}
+.auth-switch a{color:var(--pink);cursor:pointer;font-weight:500;text-decoration:none}
+.auth-tagline{text-align:center;font-size:12px;color:var(--text3);margin-top:1rem;font-style:italic}
+.profile-types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:.25rem}
+.profile-type{border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:10px 6px;text-align:center;cursor:pointer;transition:all var(--transition);font-size:12px;color:var(--text2)}
+.profile-type:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-l)}
+.profile-type.selected{border-color:var(--pink);color:var(--pink);background:var(--pink-l);font-weight:500}
+.profile-type-icon{font-size:20px;display:block;margin-bottom:4px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.divider{display:flex;align-items:center;gap:10px;color:var(--text3);font-size:12px;margin:.75rem 0}
+.divider::before,.divider::after{content:'';flex:1;height:0.5px;background:var(--border)}
+.input-icon-wrap{position:relative}
+.input-icon-wrap input{padding-right:38px}
+.input-icon-wrap .eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:0}
+
+/* ===== APP LAYOUT ===== */
+.app-screen{flex-direction:row}
+.sidebar{width:230px;background:var(--surface);border-right:0.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh;position:sticky;top:0;overflow-y:auto}
+.sidebar-logo{padding:1.4rem 1.25rem 1rem;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--border)}
+.sidebar-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;flex-shrink:0}
+.sidebar-logo span{font-family:var(--ffs);font-size:17px}
+.sidebar-logo span em{color:var(--pink);font-style:normal}
+.sidebar-nav{padding:.75rem 0;flex:1}
+.nav-section{padding:0 1rem .25rem;font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-top:.75rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 1.25rem;cursor:pointer;color:var(--text2);font-size:13px;transition:all var(--transition);border-left:2.5px solid transparent;position:relative}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--pink);background:var(--pink-l);border-left-color:var(--pink);font-weight:500}
+.nav-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--pink);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+.sidebar-user{padding:1rem 1.25rem;border-top:0.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink-l),var(--pink-m));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--pink);flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-type{font-size:11px;color:var(--text3)}
+.logout-btn{background:none;border:none;cursor:pointer;color:var(--text3);font-size:14px;padding:4px;transition:color var(--transition)}
+.logout-btn:hover{color:var(--coral)}
+
+/* ===== MAIN CONTENT ===== */
+.main{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;min-height:100vh}
+.page{display:none}
+.page.active{display:flex;flex-direction:column;gap:1.25rem}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.topbar-left h1{font-size:20px;font-weight:500}
+.topbar-left h1 span{color:var(--pink)}
+.topbar-left p{font-size:13px;color:var(--text3);margin-top:1px}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:0.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all var(--transition);position:relative}
+.icon-btn:hover{background:var(--surface2);border-color:var(--border2)}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:#E24B4A;border-radius:50%;border:1.5px solid var(--surface)}
+.add-btn{padding:9px 18px;background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity var(--transition)}
+.add-btn:hover{opacity:.85}
+.motivation-bar{background:linear-gradient(90deg,var(--pink),#9B59B6,var(--blue));border-radius:var(--radius-sm);padding:11px 1.25rem;color:#fff;font-size:13px;text-align:center;font-weight:500;letter-spacing:.01em}
+.dark-toggle-wrap{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3)}
+.toggle-switch{width:38px;height:20px;background:var(--border2);border-radius:10px;cursor:pointer;position:relative;transition:background var(--transition);flex-shrink:0}
+.toggle-switch.on{background:var(--pink)}
+.toggle-knob{width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left var(--transition);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-switch.on .toggle-knob{left:20px}
+
+/* ===== CARDS ===== */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.card-title{font-size:14px;font-weight:500;display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.card-title-left{display:flex;align-items:center;gap:8px}
+.card-title-left span{font-size:16px}
+.card-link{font-size:12px;color:var(--pink);cursor:pointer;font-weight:500}
+
+/* ===== STAT CARDS ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat-card{border-radius:var(--radius);padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:7px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.1)}
+.stat-card.pink{background:linear-gradient(135deg,#D4537E,#B8345E)}
+.stat-card.teal{background:linear-gradient(135deg,#1D9E75,#0F6E56)}
+.stat-card.amber{background:linear-gradient(135deg,#EF9F27,#BA7517)}
+.stat-card.purple{background:linear-gradient(135deg,#7F77DD,#534AB7)}
+.stat-card *{color:#fff}
+.stat-label{font-size:11px;opacity:.8;display:flex;align-items:center;justify-content:space-between}
+.stat-icon{font-size:17px;opacity:.9}
+.stat-value{font-size:24px;font-weight:600;line-height:1}
+.stat-sub{font-size:11px;opacity:.7}
+
+/* ===== CONTENT GRIDS ===== */
+.content-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:1.25rem}
+.col{display:flex;flex-direction:column;gap:1.25rem}
+.chart-wrap{position:relative;width:100%;height:200px}
+.tab-row{display:flex;gap:6px;margin-bottom:1rem}
+.tab{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--text3);transition:all var(--transition)}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--pink);color:#fff;border-color:var(--pink)}
+
+/* ===== TRANSACTIONS ===== */
+.txn-list{display:flex;flex-direction:column;gap:6px}
+.txn-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;transition:background var(--transition);position:relative}
+.txn-item:hover{background:var(--surface2)}
+.txn-icon{width:38px;height:38px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.txn-info{flex:1;min-width:0}
+.txn-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.txn-meta{font-size:11px;color:var(--text3);margin-top:1px}
+.txn-right{text-align:right;flex-shrink:0}
+.txn-amount{font-size:13px;font-weight:600;color:#E24B4A}
+.txn-amount.inc{color:var(--teal)}
+.txn-date{font-size:11px;color:var(--text3);margin-top:1px}
+.txn-actions{display:flex;gap:4px;margin-left:8px}
+.txn-act-btn{width:28px;height:28px;border-radius:var(--radius-xs);border:0.5px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all var(--transition);color:var(--text3)}
+.txn-act-btn:hover.edit{background:var(--blue-l);color:var(--blue);border-color:var(--blue)}
+.txn-act-btn:hover.del{background:#FCEBEB;color:#E24B4A;border-color:#E24B4A}
+
+/* ===== PROGRESS BARS ===== */
+.progress-list{display:flex;flex-direction:column;gap:14px}
+.progress-item{}
+.prog-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;font-size:12px}
+.prog-name{display:flex;align-items:center;gap:6px;font-weight:500}
+.prog-pct{font-weight:600}
+.prog-sub{font-size:11px;color:var(--text3);margin-bottom:5px}
+.prog-bg{height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;border:0.5px solid var(--border)}
+.prog-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+
+/* ===== INSIGHT CARDS ===== */
+.insights-list{display:flex;flex-direction:column;gap:8px}
+.insight-card{padding:11px 13px;border-radius:var(--radius-sm);font-size:12px;line-height:1.55;border-left-width:3px;border-left-style:solid}
+.insight-card.alert{background:var(--amber-l);color:var(--amber);border-left-color:var(--amber-m)}
+.insight-card.tip{background:var(--teal-l);color:var(--teal);border-left-color:var(--teal-m)}
+.insight-card.info{background:var(--purple-l);color:var(--purple);border-left-color:var(--purple-m)}
+.insight-card.warn{background:var(--pink-l);color:var(--pink);border-left-color:var(--pink-m)}
+.insight-title{font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.badge{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:600}
+.badge-alert{background:rgba(186,117,23,.15);color:var(--amber)}
+.badge-tip{background:rgba(29,158,117,.15);color:var(--teal)}
+.badge-info{background:rgba(127,119,221,.15);color:var(--purple)}
+
+/* ===== BUDGET DONUT ===== */
+.donut-wrap{position:relative;width:160px;height:160px;margin:0 auto}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.donut-pct{font-size:24px;font-weight:600}
+.donut-lbl{font-size:11px;color:var(--text3)}
+.budget-stats{display:flex;justify-content:space-around;margin-top:1rem}
+.bstat{text-align:center}
+.bstat-lbl{font-size:11px;color:var(--text3);margin-bottom:3px}
+.bstat-val{font-size:15px;font-weight:600}
+
+/* ===== GOALS PAGE ===== */
+.goals-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.goal-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow)}
+.goal-card.add-new{border-style:dashed;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:180px;color:var(--text3);transition:all var(--transition)}
+.goal-card.add-new:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-l)}
+.goal-emoji{font-size:28px;margin-bottom:8px}
+.goal-name{font-size:14px;font-weight:500;margin-bottom:3px}
+.goal-pct{font-size:22px;font-weight:600;margin:.4rem 0}
+.goal-detail{font-size:12px;color:var(--text3);margin-bottom:8px}
+.goal-eta{font-size:11px;color:var(--text3);margin-top:8px;padding:5px 9px;background:var(--surface2);border-radius:20px;display:inline-block}
+
+/* ===== AI PAGE ===== */
+.ai-chat{display:flex;flex-direction:column;gap:1rem}
+.ai-chat-messages{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem;min-height:320px;max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;gap:10px;align-items:flex-start}
+.msg.user{flex-direction:row-reverse}
+.msg-bubble{padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.6;max-width:80%}
+.msg.ai .msg-bubble{background:var(--purple-l);color:var(--text);border-bottom-left-radius:3px}
+.msg.user .msg-bubble{background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff;border-bottom-right-radius:3px}
+.msg-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg.ai .msg-avatar{background:var(--purple-l);color:var(--purple)}
+.msg.user .msg-avatar{background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff;font-size:12px;font-weight:600}
+.ai-input-row{display:flex;gap:8px}
+.ai-input{flex:1;padding:10px 14px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-size:13px;outline:none;transition:border-color var(--transition)}
+.ai-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(127,119,221,.12)}
+.ai-send-btn{padding:10px 18px;background:linear-gradient(135deg,var(--purple),#534AB7);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:opacity var(--transition)}
+.ai-send-btn:hover{opacity:.85}
+.ai-send-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-suggestions{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:.5rem}
+.ai-chip{padding:6px 12px;border:0.5px solid var(--border2);border-radius:20px;font-size:12px;cursor:pointer;transition:all var(--transition);color:var(--text2);background:var(--surface)}
+.ai-chip:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-l)}
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:8px 0}
+.typing-dot{width:7px;height:7px;background:var(--purple);border-radius:50%;animation:bounce .8s infinite}
+.typing-dot:nth-child(2){animation-delay:.15s}
+.typing-dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.api-key-section{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.api-key-row{display:flex;gap:8px}
+.api-key-row input{flex:1;padding:9px 13px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;outline:none}
+.api-key-row input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(127,119,221,.12)}
+.btn-connect{padding:9px 16px;background:linear-gradient(135deg,var(--purple),#534AB7);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
+.connected-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:var(--teal-l);color:var(--teal);border-radius:20px;font-size:12px;font-weight:500}
+
+/* ===== ANALYTICS ===== */
+.analytics-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.a-stat{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:.9rem 1rem;box-shadow:var(--shadow)}
+.a-stat-lbl{font-size:11px;color:var(--text3);margin-bottom:4px}
+.a-stat-val{font-size:18px;font-weight:600}
+.a-stat-sub{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* ===== HOUSEHOLD ===== */
+.hh-bars{display:flex;flex-direction:column;gap:12px}
+.hh-bar-item{display:flex;align-items:center;gap:10px}
+.hh-bar-label{font-size:12px;min-width:130px;display:flex;align-items:center;gap:6px}
+.hh-bar-wrap{flex:1;background:var(--surface2);border-radius:4px;height:8px;overflow:hidden}
+.hh-bar-fill{height:100%;border-radius:4px}
+.hh-bar-amt{font-size:12px;color:var(--text3);min-width:55px;text-align:right;font-weight:500}
+
+/* ===== MODAL ===== */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:0.5px solid var(--border);border-radius:20px;padding:1.75rem;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:modal-in .2s ease}
+@keyframes modal-in{from{transform:scale(.94) translateY(10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-title{font-size:17px;font-weight:500;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--text3);line-height:1}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem}
+.btn-cancel{padding:8px 16px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:transparent;color:var(--text);cursor:pointer;font-size:13px;transition:background var(--transition)}
+.btn-cancel:hover{background:var(--surface2)}
+.btn-save{padding:8px 18px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--pink),var(--pink-d));color:#fff;cursor:pointer;font-size:13px;font-weight:500}
+.form-group.modal-group{margin-bottom:.85rem}
+
+/* ===== TOAST ===== */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 18px;font-size:13px;box-shadow:0 4px 24px rgba(0,0,0,.15);transform:translateY(80px);opacity:0;transition:all .3s ease;display:flex;align-items:center;gap:8px;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:3px solid var(--teal)}
+.toast.error{border-left:3px solid #E24B4A}
+
+/* ===== EXPORT SECTION ===== */
+.export-section{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius);padding:1.25rem}
+.export-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:.75rem}
+.export-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border:0.5px solid var(--border2);border-radius:var(--radius-sm);background:var(--surface2);cursor:pointer;font-size:13px;font-weight:500;transition:all var(--transition);color:var(--text)}
+.export-btn:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-l)}
+.export-btn.csv:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-l)}
+
+/* ===== SEARCH BAR ===== */
+.search-bar{position:relative;margin-bottom:1rem}
+.search-bar input{width:100%;padding:9px 14px 9px 36px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;outline:none;transition:border-color var(--transition)}
+.search-bar input:focus{border-color:var(--pink)}
+.search-bar::before{content:'🔍';position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px}
+
+/* ===== GAMIFICATION ===== */
+.badges-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.badge-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:1rem;text-align:center;box-shadow:var(--shadow)}
+.badge-emoji{font-size:32px;margin-bottom:6px}
+.badge-name{font-size:12px;font-weight:500;margin-bottom:2px}
+.badge-desc{font-size:11px;color:var(--text3)}
+.badge-card.locked{opacity:.45;filter:grayscale(.8)}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}.content-grid{grid-template-columns:1fr}.goals-grid{grid-template-columns:repeat(2,1fr)}.analytics-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.sidebar{display:none}.stats-grid{grid-template-columns:1fr 1fr}.badges-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ===== PAGE TRANSITIONS ===== */
+.page{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN SCREEN ===== -->
+<div class="screen auth-screen active" id="screen-login">
+  <div class="auth-bg">
+    <div class="auth-blob b1"></div>
+    <div class="auth-blob b2"></div>
+    <div class="auth-blob b3"></div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">💸</div>
+      <h1>Smart <span>Budget</span></h1>
+      <p>Sign in to manage your finances</p>
+    </div>
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-icon-wrap">
+        <input type="password" id="login-password" placeholder="Your password" autocomplete="current-password"/>
+        <button class="eye-btn" onclick="togglePwd('login-password',this)">👁</button>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign In ✨</button>
+    <div class="divider">or</div>
+    <button class="btn-primary" style="background:linear-gradient(135deg,var(--teal),#0F6E56)" onclick="demoLogin()">Try Demo Account 🚀</button>
+    <div class="auth-switch">Don't have an account? <a onclick="goSignup()">Create one</a></div>
+    <div class="auth-tagline">Small savings lead to big dreams 🌸</div>
+  </div>
+</div>
+
+<!-- ===== SIGNUP SCREEN ===== -->
+<div class="screen auth-screen" id="screen-signup">
+  <div class="auth-bg">
+    <div class="auth-blob b1"></div>
+    <div class="auth-blob b2"></div>
+    <div class="auth-blob b3"></div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">💸</div>
+      <h1>Start Your <span>Journey</span></h1>
+      <p>Create your Smart Budget account</p>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Full name</label><input type="text" id="signup-name" placeholder="Your name"/></div>
+      <div class="form-group"><label>Email</label><input type="email" id="signup-email" placeholder="you@example.com"/></div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-icon-wrap">
+        <input type="password" id="signup-password" placeholder="At least 6 characters"/>
+        <button class="eye-btn" onclick="togglePwd('signup-password',this)">👁</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>I am a…</label>
+      <div class="profile-types">
+        <div class="profile-type selected" data-val="Student" onclick="selectProfile(this)"><span class="profile-type-icon">🎓</span>Student</div>
+        <div class="profile-type" data-val="Employee" onclick="selectProfile(this)"><span class="profile-type-icon">💼</span>Employee</div>
+        <div class="profile-type" data-val="Homemaker" onclick="selectProfile(this)"><span class="profile-type-icon">🏠</span>Homemaker</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="doSignup()">Create Account 🌟</button>
+    <div class="auth-switch">Already have an account? <a onclick="goLogin()">Sign in</a></div>
+  </div>
+</div>
+
+<!-- ===== APP SCREEN ===== -->
+<div class="screen app-screen" id="screen-app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">💸</div>
+      <span>Smart <em>Budget</em></span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)"><div class="nav-icon">📊</div>Dashboard</div>
+      <div class="nav-item" onclick="showPage('transactions',this)"><div class="nav-icon">💳</div>Transactions</div>
+      <div class="nav-item" onclick="showPage('goals',this)"><div class="nav-icon">🎯</div>Goals</div>
+      <div class="nav-section">Insights</div>
+      <div class="nav-item" onclick="showPage('analytics',this)"><div class="nav-icon">📈</div>Analytics</div>
+      <div class="nav-item" onclick="showPage('ai',this)"><div class="nav-icon">✨</div>AI Insights<span class="nav-badge">AI</span></div>
+      <div class="nav-section">More</div>
+      <div class="nav-item" onclick="showPage('household',this)"><div class="nav-icon">🏠</div>Household</div>
+      <div class="nav-item" onclick="showPage('badges',this)"><div class="nav-icon">🏆</div>Achievements</div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebar-avatar">P</div>
+      <div class="user-info">
+        <div class="user-name" id="sidebar-name">Kshitija Patil</div>
+        <div class="user-type" id="sidebar-type">Student</div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()" title="Logout">⏻</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main" id="main-content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1>Hello, <span id="dash-name">Kshitija</span> 👋</h1>
+          <p>Here's your financial snapshot for today</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="dark-toggle-wrap">
+            <span>🌙</span>
+            <div class="toggle-switch" id="dark-toggle" onclick="toggleDark()"><div class="toggle-knob"></div></div>
+          </div>
+          <div class="icon-btn" title="Notifications">🔔<span class="notif-dot"></span></div>
+          <button class="add-btn" onclick="openAddModal()">+ Add Expense</button>
+        </div>
+      </div>
+      <div class="motivation-bar" id="motivation-msg">Small savings today, big achievements tomorrow. Keep going! ✨</div>
+      <div class="stats-grid">
+        <div class="stat-card pink"><div class="stat-label">Total Balance<span class="stat-icon">💰</span></div><div class="stat-value">₹42,580</div><div class="stat-sub">Updated just now</div></div>
+        <div class="stat-card teal"><div class="stat-label">This Month's Spend<span class="stat-icon">📉</span></div><div class="stat-value">₹17,420</div><div class="stat-sub">₹12,580 budget left</div></div>
+        <div class="stat-card amber"><div class="stat-label">Savings<span class="stat-icon">🐖</span></div><div class="stat-value">₹95,000</div><div class="stat-sub">+₹8,500 this month</div></div>
+        <div class="stat-card purple"><div class="stat-label">Goals Progress<span class="stat-icon">🎯</span></div><div class="stat-value">72%</div><div class="stat-sub">3 active goals</div></div>
+      </div>
+      <div class="content-grid">
+        <div class="col">
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>📊</span>Expense Analytics</span></div>
+            <div class="tab-row">
+              <div class="tab active" onclick="switchMainTab(this,'weekly')">Weekly</div>
+              <div class="tab" onclick="switchMainTab(this,'category')">By Category</div>
+            </div>
+            <div class="chart-wrap"><canvas id="mainChart" role="img" aria-label="Expense bar chart">Weekly expense data Mon through Sun.</canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-title">
+              <span class="card-title-left"><span>💳</span>Recent Transactions</span>
+              <span class="card-link" onclick="showPage('transactions',null)">View all →</span>
+            </div>
+            <div class="txn-list" id="dash-txn-list"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>🗓</span>Monthly Budget</span></div>
+            <div class="donut-wrap">
+              <canvas id="donutChart" width="160" height="160" style="width:160px;height:160px" role="img" aria-label="Monthly budget donut chart: 58% used">58% of ₹30,000 used.</canvas>
+              <div class="donut-center"><div class="donut-pct">58%</div><div class="donut-lbl">used</div></div>
+            </div>
+            <div class="budget-stats">
+              <div class="bstat"><div class="bstat-lbl">Budget</div><div class="bstat-val">₹30,000</div></div>
+              <div class="bstat"><div class="bstat-lbl">Spent</div><div class="bstat-val" style="color:#E24B4A">₹17,420</div></div>
+              <div class="bstat"><div class="bstat-lbl">Left</div><div class="bstat-val" style="color:var(--teal)">₹12,580</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>🎯</span>Your Goals</span><span class="card-link" onclick="showPage('goals',null)">All goals →</span></div>
+            <div class="progress-list">
+              <div class="progress-item"><div class="prog-header"><span class="prog-name">💻 New Laptop</span><span class="prog-pct" style="color:var(--pink)">58%</span></div><div class="prog-sub">₹35,000 / ₹60,000</div><div class="prog-bg"><div class="prog-fill" style="width:58%;background:linear-gradient(90deg,var(--pink),var(--pink-m))"></div></div></div>
+              <div class="progress-item"><div class="prog-header"><span class="prog-name">✈️ Goa Trip</span><span class="prog-pct" style="color:var(--teal)">72%</span></div><div class="prog-sub">₹18,000 / ₹25,000</div><div class="prog-bg"><div class="prog-fill" style="width:72%;background:linear-gradient(90deg,var(--teal),var(--teal-m))"></div></div></div>
+              <div class="progress-item"><div class="prog-header"><span class="prog-name">🏦 Emergency Fund</span><span class="prog-pct" style="color:var(--amber)">42%</span></div><div class="prog-sub">₹42,000 / ₹1,00,000</div><div class="prog-bg"><div class="prog-fill" style="width:42%;background:linear-gradient(90deg,var(--amber),var(--amber-m))"></div></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>✨</span>AI Insights</span><span class="card-link" onclick="showPage('ai',null)">Ask AI →</span></div>
+            <div class="insights-list">
+              <div class="insight-card alert"><div class="insight-title">Food spending up 30% <span class="badge badge-alert">alert</span></div>You spent ₹4,500 on food — try meal prepping to save ₹1,500/month!</div>
+              <div class="insight-card tip"><div class="insight-title">Laptop goal on track! <span class="badge badge-tip">tip</span></div>At current rate, you'll reach ₹60,000 by July — 1 month early.</div>
+              <div class="insight-card info"><div class="insight-title">Smart savings opportunity</div>Monthly metro pass saves ₹400/month vs daily tickets.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TRANSACTIONS PAGE ===== -->
+    <div class="page" id="page-transactions">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Transactions</h1><p>All your expenses in one place</p></div>
+        <div class="topbar-actions">
+          <button class="add-btn" onclick="openAddModal()">+ Add Expense</button>
+        </div>
+      </div>
+      <div class="export-section">
+        <div class="card-title" style="margin-bottom:.5rem"><span class="card-title-left"><span>📤</span>Export Data</span></div>
+        <div class="export-btns">
+          <button class="export-btn" onclick="exportPDF()">📄 Download PDF Report</button>
+          <button class="export-btn csv" onclick="exportCSV()">📊 Download CSV</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+          <div class="search-bar" style="flex:1;min-width:160px;margin-bottom:0"><input type="text" placeholder="Search transactions…" oninput="filterTxns(this.value)" id="txn-search"/></div>
+          <select onchange="filterCat(this.value)" style="padding:8px 12px;border:0.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);font-size:13px;outline:none">
+            <option value="">All Categories</option>
+            <option>Food & Dining</option><option>Shopping</option><option>Transport</option>
+            <option>Bills & Utilities</option><option>Groceries</option><option>Entertainment</option><option>Income</option>
+          </select>
+        </div>
+        <div class="txn-list" id="full-txn-list"></div>
+      </div>
+    </div>
+
+    <!-- ===== GOALS PAGE ===== -->
+    <div class="page" id="page-goals">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Goals 🎯</h1><p>Track your financial dreams</p></div>
+        <div class="topbar-actions"><button class="add-btn">+ Add Goal</button></div>
+      </div>
+      <div class="goals-grid">
+        <div class="goal-card"><div class="goal-emoji">💻</div><div class="goal-name">New Laptop</div><div class="goal-pct" style="color:var(--pink)">58%</div><div class="goal-detail">₹35,000 saved of ₹60,000</div><div class="prog-bg"><div class="prog-fill" style="width:58%;background:linear-gradient(90deg,var(--pink),var(--pink-m))"></div></div><div class="goal-eta">Est. July 2025</div></div>
+        <div class="goal-card"><div class="goal-emoji">✈️</div><div class="goal-name">Goa Trip</div><div class="goal-pct" style="color:var(--teal)">72%</div><div class="goal-detail">₹18,000 saved of ₹25,000</div><div class="prog-bg"><div class="prog-fill" style="width:72%;background:linear-gradient(90deg,var(--teal),var(--teal-m))"></div></div><div class="goal-eta">₹7,000 more needed</div></div>
+        <div class="goal-card"><div class="goal-emoji">🏦</div><div class="goal-name">Emergency Fund</div><div class="goal-pct" style="color:var(--amber)">42%</div><div class="goal-detail">₹42,000 saved of ₹1,00,000</div><div class="prog-bg"><div class="prog-fill" style="width:42%;background:linear-gradient(90deg,var(--amber),var(--amber-m))"></div></div><div class="goal-eta">Save ₹5,000/month → Dec</div></div>
+        <div class="goal-card"><div class="goal-emoji">🎓</div><div class="goal-name">Online Course</div><div class="goal-pct" style="color:var(--purple)">85%</div><div class="goal-detail">₹8,500 saved of ₹10,000</div><div class="prog-bg"><div class="prog-fill" style="width:85%;background:linear-gradient(90deg,var(--purple),var(--purple-m))"></div></div><div class="goal-eta">Almost there!</div></div>
+        <div class="goal-card add-new" onclick="showToast('Goal creation coming soon!','success')"><div style="font-size:32px;margin-bottom:8px">+</div><div style="font-size:13px;font-weight:500">Add new goal</div><div style="font-size:11px;margin-top:4px">Set a target and start saving</div></div>
+      </div>
+    </div>
+
+    <!-- ===== ANALYTICS PAGE ===== -->
+    <div class="page" id="page-analytics">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Analytics 📈</h1><p>Deep dive into your spending patterns</p></div>
+        <div class="topbar-actions">
+          <button class="export-btn" style="height:36px" onclick="exportPDF()">📄 Export</button>
+        </div>
+      </div>
+      <div class="analytics-stats">
+        <div class="a-stat" style="border-left:3px solid var(--pink)"><div class="a-stat-lbl">Avg. Daily Spend</div><div class="a-stat-val">₹580</div><div class="a-stat-sub">vs ₹650 last month ↓</div></div>
+        <div class="a-stat" style="border-left:3px solid var(--teal)"><div class="a-stat-lbl">Top Category</div><div class="a-stat-val">Food</div><div class="a-stat-sub">35% of total spend</div></div>
+        <div class="a-stat" style="border-left:3px solid var(--amber)"><div class="a-stat-lbl">Savings Rate</div><div class="a-stat-val">28%</div><div class="a-stat-sub">Target: 30%</div></div>
+        <div class="a-stat" style="border-left:3px solid var(--purple)"><div class="a-stat-lbl">Unnecessary Spend</div><div class="a-stat-val">₹2,100</div><div class="a-stat-sub">Could be saved</div></div>
+      </div>
+      <div class="content-grid">
+        <div class="card"><div class="card-title"><span class="card-title-left"><span>🥧</span>Spending by Category</span></div><div class="chart-wrap" style="height:260px"><canvas id="catChart" role="img" aria-label="Category spending donut chart">Food 35%, Shopping 22%, Bills 18%, Transport 10%, Groceries 9%, Entertainment 6%.</canvas></div></div>
+        <div class="card"><div class="card-title"><span class="card-title-left"><span>📆</span>Monthly Trend</span></div><div class="chart-wrap" style="height:260px"><canvas id="trendChart" role="img" aria-label="Monthly spending trend Jan to Apr">Spending trend Jan to Apr 2025.</canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span class="card-title-left"><span>🔮</span>Predicted Expenses — May 2025</span></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div style="background:var(--pink-l);border-radius:var(--radius-sm);padding:.9rem;text-align:center"><div style="font-size:12px;color:var(--pink);margin-bottom:4px">Food & Dining</div><div style="font-size:18px;font-weight:600;color:var(--pink)">₹4,800</div><div style="font-size:11px;color:var(--text3)">Based on last 3 months</div></div>
+          <div style="background:var(--teal-l);border-radius:var(--radius-sm);padding:.9rem;text-align:center"><div style="font-size:12px;color:var(--teal);margin-bottom:4px">Transport</div><div style="font-size:18px;font-weight:600;color:var(--teal)">₹1,100</div><div style="font-size:11px;color:var(--text3)">Slightly down trend</div></div>
+          <div style="background:var(--amber-l);border-radius:var(--radius-sm);padding:.9rem;text-align:center"><div style="font-size:12px;color:var(--amber);margin-bottom:4px">Shopping</div><div style="font-size:18px;font-weight:600;color:var(--amber)">₹2,600</div><div style="font-size:11px;color:var(--text3)">Festival month — higher</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AI INSIGHTS PAGE ===== -->
+    <div class="page" id="page-ai">
+      <div class="topbar">
+        <div class="topbar-left"><h1>AI Insights ✨</h1><p>Your personal finance coach powered by Claude</p></div>
+      </div>
+
+      <!-- API Key Section -->
+      <div class="api-key-section" id="api-key-section">
+        <div class="card-title" style="margin-bottom:.5rem"><span class="card-title-left"><span>🔑</span>Connect to Claude AI</span><span id="connected-badge" style="display:none" class="connected-badge">✅ Connected</span></div>
+        <p style="font-size:12px;color:var(--text3);margin-bottom:.75rem">Enter your Anthropic API key to enable real AI-powered financial insights. Your key stays in your browser only.</p>
+        <div class="api-key-row">
+          <input type="password" id="api-key-input" placeholder="sk-ant-api03-…" autocomplete="off"/>
+          <button class="btn-connect" onclick="connectAPI()">Connect</button>
+        </div>
+      </div>
+
+      <!-- Pre-built Insight Cards -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="insight-card alert" style="padding:14px 16px"><div class="insight-title" style="font-size:13px">Food spending up 30% <span class="badge badge-alert">alert</span></div><p style="font-size:12px;line-height:1.6">You spent ₹4,500 on food this week. Try Sunday meal prepping — could save ₹1,500/month and improve savings rate by 5%.</p></div>
+        <div class="insight-card tip" style="padding:14px 16px"><div class="insight-title" style="font-size:13px">Laptop goal on track! ✅ <span class="badge badge-tip">tip</span></div><p style="font-size:12px;line-height:1.6">At ₹5,000/month savings, you'll hit ₹60,000 by July — 1 month ahead of schedule. Keep this momentum!</p></div>
+        <div class="insight-card info" style="padding:14px 16px"><div class="insight-title" style="font-size:13px">Weekend spending spike</div><p style="font-size:12px;line-height:1.6">You spend 40% more on weekends (avg ₹1,100) vs weekdays (₹650). A weekend budget cap of ₹900 could save ₹800/month.</p></div>
+        <div class="insight-card warn" style="padding:14px 16px"><div class="insight-title" style="font-size:13px">Subscription audit recommended</div><p style="font-size:12px;line-height:1.6">4 active subscriptions totaling ₹899/month detected. Review if all are in use — could free up ₹300+ monthly.</p></div>
+      </div>
+
+      <!-- AI Chat -->
+      <div class="card">
+        <div class="card-title"><span class="card-title-left"><span>🤖</span>Ask Your AI Financial Coach</span></div>
+        <div class="ai-suggestions">
+          <div class="ai-chip" onclick="askAI('How can I save more money this month?')">How can I save more?</div>
+          <div class="ai-chip" onclick="askAI('Analyze my spending habits and give suggestions')">Analyze my spending</div>
+          <div class="ai-chip" onclick="askAI('Give me a savings plan to reach my laptop goal faster')">Reach laptop goal faster</div>
+          <div class="ai-chip" onclick="askAI('What unnecessary expenses should I cut?')">Cut unnecessary expenses</div>
+          <div class="ai-chip" onclick="askAI('Create a monthly budget plan for me')">Budget plan for me</div>
+        </div>
+        <div class="ai-chat-messages" id="chat-messages">
+          <div class="msg ai">
+            <div class="msg-avatar">✨</div>
+            <div class="msg-bubble">Hello! I'm your AI financial coach. I can help you analyze your spending, plan savings, and achieve your financial goals. What would you like to know? 💰</div>
+          </div>
+        </div>
+        <div class="ai-input-row" style="margin-top:.75rem">
+          <input class="ai-input" id="ai-input" placeholder="Ask anything about your finances…" onkeydown="if(event.key==='Enter')sendAI()"/>
+          <button class="ai-send-btn" id="ai-send-btn" onclick="sendAI()">Send →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== HOUSEHOLD PAGE ===== -->
+    <div class="page" id="page-household">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Household Budget 🏠</h1><p>Family & shared expense management</p></div>
+        <div class="topbar-actions"><button class="add-btn">+ Add Member</button></div>
+      </div>
+      <div class="content-grid">
+        <div class="col">
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>📊</span>Monthly Household Breakdown</span></div>
+            <div class="hh-bars">
+              <div class="hh-bar-item"><span class="hh-bar-label">🍱 Food & Groceries</span><div class="hh-bar-wrap"><div class="hh-bar-fill" style="width:60%;background:var(--pink)"></div></div><span class="hh-bar-amt">₹6,000</span></div>
+              <div class="hh-bar-item"><span class="hh-bar-label">💡 Utilities</span><div class="hh-bar-wrap"><div class="hh-bar-fill" style="width:25%;background:var(--amber)"></div></div><span class="hh-bar-amt">₹2,500</span></div>
+              <div class="hh-bar-item"><span class="hh-bar-label">🎓 Education</span><div class="hh-bar-wrap"><div class="hh-bar-fill" style="width:20%;background:var(--teal)"></div></div><span class="hh-bar-amt">₹2,000</span></div>
+              <div class="hh-bar-item"><span class="hh-bar-label">🏥 Health</span><div class="hh-bar-wrap"><div class="hh-bar-fill" style="width:10%;background:var(--purple)"></div></div><span class="hh-bar-amt">₹1,000</span></div>
+              <div class="hh-bar-item"><span class="hh-bar-label">🎉 Leisure</span><div class="hh-bar-wrap"><div class="hh-bar-fill" style="width:8%;background:var(--coral)"></div></div><span class="hh-bar-amt">₹800</span></div>
+              <div class="hh-bar-item"><span class="hh-bar-label">🚗 Transport</span><div class="hh-bar-wrap"><div class="hh-bar-fill" style="width:12%;background:var(--blue)"></div></div><span class="hh-bar-amt">₹1,200</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>📈</span>Essentials vs Luxury</span></div>
+            <div class="chart-wrap" style="height:180px"><canvas id="hhChart" role="img" aria-label="Household essentials vs luxury pie chart">Essentials 72%, Luxury 28%.</canvas></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>👨‍👩‍👧</span>Family Members</span></div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink-l),var(--pink-m));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--pink)">P</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Priya (You)</div><div style="font-size:11px;color:var(--text3)">Spent ₹8,200 this month</div></div><span style="font-size:11px;background:var(--pink-l);color:var(--pink);padding:3px 8px;border-radius:10px">Admin</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal-l),var(--teal-m));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--teal)">R</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Raju (Husband)</div><div style="font-size:11px;color:var(--text3)">Spent ₹9,220 this month</div></div><span style="font-size:11px;background:var(--teal-l);color:var(--teal);padding:3px 8px;border-radius:10px">Member</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="card-title-left"><span>💡</span>Family Planning Tips</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+              <div style="padding:10px;background:var(--teal-l);color:var(--teal);border-radius:var(--radius-sm);line-height:1.55">Save ₹500/month in a family emergency jar — small but consistent!</div>
+              <div style="padding:10px;background:var(--amber-l);color:var(--amber);border-radius:var(--radius-sm);line-height:1.55">Buying groceries in bulk on weekends can reduce food costs by 15–20%.</div>
+              <div style="padding:10px;background:var(--purple-l);color:var(--purple);border-radius:var(--radius-sm);line-height:1.55">Families who track together save 22% more on average. Keep it up!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== BADGES PAGE ===== -->
+    <div class="page" id="page-badges">
+      <div class="topbar">
+        <div class="topbar-left"><h1>Achievements 🏆</h1><p>Your milestones and savings badges</p></div>
+      </div>
+      <div class="card" style="margin-bottom:1.25rem">
+        <div style="text-align:center;padding:.5rem 0 1rem">
+          <div style="font-size:48px">⭐</div>
+          <div style="font-size:22px;font-weight:600;margin:.5rem 0">Level 4 — Money Savvy</div>
+          <div style="font-size:13px;color:var(--text3)">850 / 1000 XP to next level</div>
+          <div style="max-width:300px;margin:.75rem auto 0"><div class="prog-bg"><div class="prog-fill" style="width:85%;background:linear-gradient(90deg,var(--pink),var(--purple))"></div></div></div>
+        </div>
+      </div>
+      <div class="badges-grid">
+        <div class="badge-card"><div class="badge-emoji">🌱</div><div class="badge-name">First Step</div><div class="badge-desc">Logged your first expense</div></div>
+        <div class="badge-card"><div class="badge-emoji">📅</div><div class="badge-name">7-Day Streak</div><div class="badge-desc">Logged expenses 7 days straight</div></div>
+        <div class="badge-card"><div class="badge-emoji">💰</div><div class="badge-name">Saver Queen</div><div class="badge-desc">Saved 25% in a month</div></div>
+        <div class="badge-card"><div class="badge-emoji">🎯</div><div class="badge-name">Goal Getter</div><div class="badge-desc">Completed your first goal</div></div>
+        <div class="badge-card locked"><div class="badge-emoji">🏆</div><div class="badge-name">Budget Master</div><div class="badge-desc">Stay under budget 3 months</div></div>
+        <div class="badge-card locked"><div class="badge-emoji">💎</div><div class="badge-name">Diamond Saver</div><div class="badge-desc">Save ₹1,00,000 total</div></div>
+        <div class="badge-card locked"><div class="badge-emoji">🚀</div><div class="badge-name">Goal Crusher</div><div class="badge-desc">Complete 5 financial goals</div></div>
+        <div class="badge-card locked"><div class="badge-emoji">👑</div><div class="badge-name">Financial Queen</div><div class="badge-desc">Achieve financial independence</div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ===== ADD EXPENSE MODAL ===== -->
+<div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeModal('add-modal')">
+  <div class="modal">
+    <div class="modal-title">Add New Expense <button class="modal-close" onclick="closeModal('add-modal')">✕</button></div>
+    <div class="form-row">
+      <div class="form-group modal-group"><label>Amount (₹)</label><input type="number" id="exp-amount" placeholder="0" min="0"/></div>
+      <div class="form-group modal-group"><label>Date</label><input type="date" id="exp-date"/></div>
+    </div>
+    <div class="form-group modal-group"><label>Category</label>
+      <select id="exp-cat">
+        <option>Food & Dining</option><option>Shopping</option><option>Transport</option>
+        <option>Bills & Utilities</option><option>Groceries</option><option>Entertainment</option>
+        <option>Health</option><option>Education</option>
+      </select>
+    </div>
+    <div class="form-group modal-group"><label>Notes</label><input type="text" id="exp-notes" placeholder="What was this for?"/></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('add-modal')">Cancel</button>
+      <button class="btn-save" onclick="saveExpense()">Save Expense</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== DATA ===== */
+let currentUser = { name:'Priya Sharma', type:'Employee', email:'priya@email.com' };
+let apiKey = '';
+let transactions = [
+  {id:1, icon:'🍽', cat:'Food & Dining', note:'Lunch with friends', amt:-450, date:'14 Apr', bg:'var(--pink-l)'},
+  {id:2, icon:'🛍', cat:'Shopping', note:'New kurta for festival', amt:-1200, date:'14 Apr', bg:'var(--purple-l)'},
+  {id:3, icon:'🚗', cat:'Transport', note:'Auto to office', amt:-80, date:'13 Apr', bg:'var(--teal-l)'},
+  {id:4, icon:'💡', cat:'Bills & Utilities', note:'Electricity bill', amt:-2500, date:'12 Apr', bg:'var(--amber-l)'},
+  {id:5, icon:'🥦', cat:'Groceries', note:'Weekly vegetables', amt:-350, date:'12 Apr', bg:'var(--teal-l)'},
+  {id:6, icon:'🎬', cat:'Entertainment', note:'Movie subscription', amt:-199, date:'11 Apr', bg:'var(--purple-l)'},
+  {id:7, icon:'💼', cat:'Income', note:'Monthly salary', amt:45000, date:'1 Apr', bg:'var(--teal-l)'},
+];
+let chatHistory = [];
+const motivations = [
+  'Small savings today, big achievements tomorrow. Keep going! ✨',
+  'You are the CFO of your own life. Own it! 💪',
+  'Every rupee saved is a step closer to your dreams. 🌟',
+  'Strong women build strong savings. You\'re doing amazing! 🌸',
+  'Financial independence is your superpower. Keep at it! ⚡'
+];
+
+/* ===== AUTH ===== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+function goSignup(){ showScreen('signup'); }
+function goLogin(){ showScreen('login'); }
+function doLogin(){
+  const e=document.getElementById('login-email').value.trim();
+  const p=document.getElementById('login-password').value;
+  if(!e||!p){showToast('Please fill in all fields','error');return;}
+  currentUser={name:'Priya Sharma',type:'Employee',email:e};
+  launchApp();
+}
+function demoLogin(){
+  currentUser={name:'Priya Sharma',type:'Employee',email:'demo@smartbudget.in'};
+  launchApp();
+}
+function doSignup(){
+  const n=document.getElementById('signup-name').value.trim();
+  const e=document.getElementById('signup-email').value.trim();
+  const p=document.getElementById('signup-password').value;
+  const t=document.querySelector('.profile-type.selected')?.dataset.val||'Student';
+  if(!n||!e||!p){showToast('Please fill in all fields','error');return;}
+  if(p.length<6){showToast('Password must be at least 6 characters','error');return;}
+  currentUser={name:n,type:t,email:e};
+  launchApp();
+}
+function doLogout(){
+  showScreen('login');
+  showToast('Logged out successfully','success');
+}
+function launchApp(){
+  document.getElementById('sidebar-name').textContent=currentUser.name;
+  document.getElementById('sidebar-type').textContent=currentUser.type;
+  document.getElementById('sidebar-avatar').textContent=currentUser.name.charAt(0).toUpperCase();
+  document.getElementById('dash-name').textContent=currentUser.name.split(' ')[0];
+  document.getElementById('motivation-msg').textContent=motivations[Math.floor(Math.random()*motivations.length)];
+  showScreen('app');
+  renderTxns('dash-txn-list', transactions.slice(0,5), false);
+  renderTxns('full-txn-list', transactions, true);
+  setTimeout(initCharts, 150);
+  showToast('Welcome back, '+currentUser.name.split(' ')[0]+'! 🌸','success');
+}
+function selectProfile(el){
+  document.querySelectorAll('.profile-type').forEach(p=>p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function togglePwd(id,btn){
+  const inp=document.getElementById(id);
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁';}
+}
+
+/* ===== NAVIGATION ===== */
+function showPage(id, navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  else{
+    const items=document.querySelectorAll('.nav-item');
+    items.forEach(i=>{if(i.textContent.toLowerCase().includes(id.substring(0,4)))i.classList.add('active');});
+  }
+  setTimeout(()=>{
+    if(id==='analytics'){makeCatChart();makeTrendChart();}
+    if(id==='household'){makeHHChart();}
+  },100);
+}
+
+/* ===== DARK MODE ===== */
+function toggleDark(){
+  const tog=document.getElementById('dark-toggle');
+  const isDark=document.documentElement.dataset.theme==='dark';
+  document.documentElement.dataset.theme=isDark?'':'dark';
+  tog.classList.toggle('on',!isDark);
+  rebuildCharts();
+}
+
+/* ===== TRANSACTIONS ===== */
+const catIcons={Food:'🍽',Shopping:'🛍',Transport:'🚗',Bills:'💡',Groceries:'🥦',Entertainment:'🎬',Health:'🏥',Education:'🎓',Income:'💼'};
+const catBgs={Food:'var(--pink-l)',Shopping:'var(--purple-l)',Transport:'var(--teal-l)',Bills:'var(--amber-l)',Groceries:'var(--teal-l)',Entertainment:'var(--purple-l)',Health:'var(--coral-l)',Education:'var(--blue-l)',Income:'var(--teal-l)'};
+function renderTxns(elId, list, showActions){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  el.innerHTML='';
+  list.forEach(t=>{
+    const d=document.createElement('div');
+    d.className='txn-item';
+    d.innerHTML=`<div class="txn-icon" style="background:${t.bg}">${t.icon}</div>
+    <div class="txn-info"><div class="txn-name">${t.cat}</div><div class="txn-meta">${t.note}</div></div>
+    <div class="txn-right">
+      <div class="txn-amount${t.amt>0?' inc':''}">${t.amt>0?'+':''}₹${Math.abs(t.amt).toLocaleString('en-IN')}</div>
+      <div class="txn-date">${t.date}</div>
+    </div>
+    ${showActions?`<div class="txn-actions">
+      <button class="txn-act-btn edit" title="Edit" onclick="event.stopPropagation()">✏</button>
+      <button class="txn-act-btn del" title="Delete" onclick="deleteTxn(${t.id},event)">🗑</button>
+    </div>`:''}`;
+    el.appendChild(d);
+  });
+  if(list.length===0)el.innerHTML='<div style="text-align:center;padding:2rem;color:var(--text3);font-size:13px">No transactions found</div>';
+}
+function filterTxns(q){
+  const fil=transactions.filter(t=>t.cat.toLowerCase().includes(q.toLowerCase())||t.note.toLowerCase().includes(q.toLowerCase()));
+  renderTxns('full-txn-list',fil,true);
+}
+function filterCat(cat){
+  const fil=cat?transactions.filter(t=>t.cat===cat):transactions;
+  renderTxns('full-txn-list',fil,true);
+}
+function deleteTxn(id,e){
+  e.stopPropagation();
+  transactions=transactions.filter(t=>t.id!==id);
+  renderTxns('full-txn-list',transactions,true);
+  renderTxns('dash-txn-list',transactions.slice(0,5),false);
+  showToast('Transaction deleted','success');
+}
+
+/* ===== ADD EXPENSE ===== */
+function openAddModal(){
+  document.getElementById('add-modal').classList.add('open');
+  document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('exp-amount').value='';
+  document.getElementById('exp-notes').value='';
+}
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function saveExpense(){
+  const amt=parseFloat(document.getElementById('exp-amount').value);
+  const cat=document.getElementById('exp-cat').value;
+  const notes=document.getElementById('exp-notes').value||'Expense';
+  const dateVal=document.getElementById('exp-date').value;
+  if(!amt||amt<=0){showToast('Please enter a valid amount','error');return;}
+  const key=Object.keys(catIcons).find(k=>cat.includes(k))||'Food';
+  const today=new Date(dateVal);
+  const dateStr=today.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+  const newT={id:Date.now(),icon:catIcons[key],cat,note:notes,amt:-amt,date:dateStr,bg:catBgs[key]};
+  transactions.unshift(newT);
+  renderTxns('dash-txn-list',transactions.slice(0,5),false);
+  renderTxns('full-txn-list',transactions,true);
+  closeModal('add-modal');
+  showToast('Expense added successfully! 🎉','success');
+  rebuildMainChart();
+}
+
+/* ===== CHARTS ===== */
+let mainC,donutC,catC,trendC,hhC;
+function initCharts(){
+  makeMainChart();
+  makeDonutChart();
+}
+function makeMainChart(){
+  if(mainC)mainC.destroy();
+  mainC=new Chart(document.getElementById('mainChart'),{
+    type:'bar',
+    data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[{data:[550,350,1400,270,640,1150,310],backgroundColor:'#ED93B1',hoverBackgroundColor:'#D4537E',borderRadius:7,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+c.raw.toLocaleString('en-IN')}}},scales:{x:{grid:{display:false},ticks:{color:'#888780',font:{size:11}}},y:{grid:{color:'rgba(136,135,128,.12)'},ticks:{color:'#888780',font:{size:11},callback:v=>'₹'+v}}}}
+  });
+}
+function makeCategoryChart(){
+  if(mainC)mainC.destroy();
+  mainC=new Chart(document.getElementById('mainChart'),{
+    type:'bar',
+    data:{labels:['Food','Shopping','Bills','Transport','Groceries','Entertainment'],
+      datasets:[{data:[4500,2800,2300,1280,1150,800],backgroundColor:['#D4537E','#AFA9EC','#EF9F27','#5DCAA5','#85B7EB','#F09595'],borderRadius:7,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'₹'+c.raw.toLocaleString('en-IN')}}},scales:{x:{grid:{display:false},ticks:{color:'#888780',font:{size:11}}},y:{grid:{color:'rgba(136,135,128,.12)'},ticks:{color:'#888780',font:{size:11},callback:v=>'₹'+v}}}}
+  });
+}
+function makeDonutChart(){
+  if(donutC)donutC.destroy();
+  donutC=new Chart(document.getElementById('donutChart'),{
+    type:'doughnut',
+    data:{labels:['Spent','Left'],datasets:[{data:[17420,12580],backgroundColor:['#D4537E','rgba(136,135,128,.15)'],borderWidth:0}]},
+    options:{responsive:false,cutout:'74%',plugins:{legend:{display:false},tooltip:{enabled:false}}}
+  });
+}
+function makeCatChart(){
+  const el=document.getElementById('catChart');
+  if(!el)return;
+  if(catC)catC.destroy();
+  catC=new Chart(el,{
+    type:'doughnut',
+    data:{labels:['Food','Shopping','Bills','Transport','Groceries','Entertainment'],
+      datasets:[{data:[35,22,18,10,9,6],backgroundColor:['#D4537E','#AFA9EC','#EF9F27','#5DCAA5','#85B7EB','#F09595'],borderWidth:3,borderColor:'transparent',hoverOffset:8}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{font:{size:12},padding:14,boxWidth:12,color:'#888780',usePointStyle:true}}}}
+  });
+}
+function makeTrendChart(){
+  const el=document.getElementById('trendChart');
+  if(!el)return;
+  if(trendC)trendC.destroy();
+  trendC=new Chart(el,{
+    type:'line',
+    data:{labels:['Jan','Feb','Mar','Apr'],
+      datasets:[
+        {label:'Spend',data:[22000,19500,24000,17420],borderColor:'#D4537E',backgroundColor:'rgba(212,83,126,0.08)',borderWidth:2.5,tension:0.45,pointBackgroundColor:'#D4537E',pointRadius:5,fill:true},
+        {label:'Saved',data:[8000,9500,7200,8500],borderColor:'#1D9E75',backgroundColor:'rgba(29,158,117,0.08)',borderWidth:2.5,tension:0.45,pointBackgroundColor:'#1D9E75',pointRadius:5,fill:true}
+      ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:12},boxWidth:12,color:'#888780'}}},scales:{x:{grid:{display:false},ticks:{color:'#888780',font:{size:11}}},y:{grid:{color:'rgba(136,135,128,.12)'},ticks:{color:'#888780',font:{size:11},callback:v=>'₹'+v.toLocaleString('en-IN')}}}}
+  });
+}
+function makeHHChart(){
+  const el=document.getElementById('hhChart');
+  if(!el)return;
+  if(hhC)hhC.destroy();
+  hhC=new Chart(el,{
+    type:'doughnut',
+    data:{labels:['Essentials','Leisure/Luxury'],datasets:[{data:[72,28],backgroundColor:['#1D9E75','#D4537E'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'bottom',labels:{font:{size:12},boxWidth:12,color:'#888780'}}}}
+  });
+}
+function rebuildCharts(){ if(mainC)mainC.destroy(); makeMainChart(); if(donutC)donutC.destroy(); makeDonutChart(); }
+function rebuildMainChart(){ if(mainC)mainC.destroy(); makeMainChart(); }
+function switchMainTab(el,type){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  if(type==='category')makeCategoryChart();
+  else makeMainChart();
+}
+
+/* ===== AI CHAT ===== */
+function connectAPI(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k||!k.startsWith('sk-')){showToast('Please enter a valid Anthropic API key','error');return;}
+  apiKey=k;
+  document.getElementById('connected-badge').style.display='inline-flex';
+  document.getElementById('api-key-input').value='sk-ant-…(saved)';
+  document.getElementById('api-key-input').disabled=true;
+  showToast('AI connected! Ask anything about your finances ✨','success');
+}
+function askAI(prompt){
+  document.getElementById('ai-input').value=prompt;
+  sendAI();
+}
+async function sendAI(){
+  const inp=document.getElementById('ai-input');
+  const msg=inp.value.trim();
+  if(!msg)return;
+  inp.value='';
+  const btn=document.getElementById('ai-send-btn');
+  btn.disabled=true;
+  addChatMsg('user',msg);
+  const typing=addTyping();
+  const context=`You are a friendly, empowering AI financial coach for women in India. The user's profile: Name=${currentUser.name}, Type=${currentUser.type}. Current data: Monthly budget ₹30,000, spent ₹17,420, savings ₹95,000. Goals: Laptop (58%), Goa Trip (72%), Emergency Fund (42%). Recent expenses: Food ₹4,500, Shopping ₹2,800, Bills ₹2,300. Respond with actionable, encouraging advice in 2-4 sentences. Use ₹ for currency. Keep it warm and empowering.`;
+  try{
+    if(!apiKey)throw new Error('no-key');
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        system:context,
+        messages:[...chatHistory,{role:'user',content:msg}]
+      })
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    const reply=data.content.map(i=>i.text||'').join('');
+    typing.remove();
+    addChatMsg('ai',reply);
+    chatHistory.push({role:'user',content:msg},{role:'assistant',content:reply});
+    if(chatHistory.length>12)chatHistory=chatHistory.slice(-12);
+  }catch(err){
+    typing.remove();
+    const fallbacks={
+      'no-key':'Please connect your Anthropic API key above to enable real AI responses! In the meantime, I can tell you: based on your data, try reducing food spending by meal prepping to save ₹1,500/month. 🌱',
+      default:'I\'m having trouble connecting right now. Based on your spending pattern, reducing dining out by just 2 times a week could save you ₹800/month. Small changes lead to big results! 💪'
+    };
+    addChatMsg('ai',fallbacks[err.message==='no-key'?'no-key':'default']);
+  }
+  btn.disabled=false;
+}
+function addChatMsg(role,text){
+  const c=document.getElementById('chat-messages');
+  const d=document.createElement('div');
+  d.className=`msg ${role}`;
+  d.innerHTML=`<div class="msg-avatar">${role==='ai'?'✨':currentUser.name.charAt(0)}</div><div class="msg-bubble">${text}</div>`;
+  c.appendChild(d);
+  c.scrollTop=c.scrollHeight;
+  return d;
+}
+function addTyping(){
+  const c=document.getElementById('chat-messages');
+  const d=document.createElement('div');
+  d.className='msg ai';
+  d.innerHTML=`<div class="msg-avatar">✨</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  c.appendChild(d);
+  c.scrollTop=c.scrollHeight;
+  return d;
+}
+
+/* ===== EXPORT ===== */
+function exportCSV(){
+  const headers=['Date','Category','Notes','Amount (₹)'];
+  const rows=transactions.map(t=>[t.date,t.cat,t.note,t.amt]);
+  let csv=headers.join(',')+'\n'+rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='smart_budget_transactions.csv';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('CSV exported successfully! 📊','success');
+}
+function exportPDF(){
+  const content=`
+SMART BUDGET — FINANCIAL REPORT
+Generated: ${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})}
+User: ${currentUser.name} (${currentUser.type})
+============================================
+
+MONTHLY SUMMARY
+  Total Budget:    ₹30,000
+  Amount Spent:    ₹17,420 (58%)
+  Remaining:       ₹12,580
+  Savings:         ₹95,000
+
+SPENDING BY CATEGORY
+  Food & Dining:   ₹4,500 (26%)
+  Shopping:        ₹2,800 (16%)
+  Bills & Utils:   ₹2,300 (13%)
+  Transport:       ₹1,280 (7%)
+  Groceries:       ₹1,150 (7%)
+  Entertainment:   ₹800  (5%)
+
+GOALS PROGRESS
+  New Laptop:      58% — ₹35,000 / ₹60,000
+  Goa Trip:        72% — ₹18,000 / ₹25,000
+  Emergency Fund:  42% — ₹42,000 / ₹1,00,000
+
+TRANSACTIONS
+${transactions.map(t=>`  ${t.date.padEnd(10)} ${t.cat.padEnd(20)} ${t.note.padEnd(25)} ${(t.amt>0?'+':'')+t.amt}`).join('\n')}
+
+============================================
+"Small savings lead to big dreams" 🌸
+Smart Budget — Your Financial Independence Partner
+  `;
+  const blob=new Blob([content],{type:'text/plain'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download='smart_budget_report.txt';
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Report downloaded! 📄','success');
+}
+
+/* ===== TOAST ===== */
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.innerHTML=(type==='success'?'✅ ':'❌ ')+msg;
+  t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+/* ===== INIT ===== */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+});
+</script>
+</body>
+</html>
