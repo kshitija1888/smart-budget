@@ -1,4 +1,6 @@
 # smart-budget
+## Live Demo
+https://smart-budget.vercel.app
 💸 Smart Budget — Personal Finance Management Web App
 
 Smart Budget is a modern, user-friendly financial management web application designed to help users track expenses, manage budgets, and achieve financial goals efficiently.
