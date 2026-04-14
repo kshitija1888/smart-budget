@@ -632,8 +632,8 @@ button,input,select,textarea{font-family:var(--ff)}
           <div class="card">
             <div class="card-title"><span class="card-title-left"><span>👨‍👩‍👧</span>Family Members</span></div>
             <div style="display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink-l),var(--pink-m));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--pink)">P</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Priya (You)</div><div style="font-size:11px;color:var(--text3)">Spent ₹8,200 this month</div></div><span style="font-size:11px;background:var(--pink-l);color:var(--pink);padding:3px 8px;border-radius:10px">Admin</span></div>
-              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal-l),var(--teal-m));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--teal)">R</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Raju (Husband)</div><div style="font-size:11px;color:var(--text3)">Spent ₹9,220 this month</div></div><span style="font-size:11px;background:var(--teal-l);color:var(--teal);padding:3px 8px;border-radius:10px">Member</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--pink-l),var(--pink-m));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--pink)">P</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Kshitija (You)</div><div style="font-size:11px;color:var(--text3)">Spent ₹8,200 this month</div></div><span style="font-size:11px;background:var(--pink-l);color:var(--pink);padding:3px 8px;border-radius:10px">Admin</span></div>
+              <div style="display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm)"><div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal-l),var(--teal-m));display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--teal)">R</div><div style="flex:1"><div style="font-size:13px;font-weight:500">Aaryan (Best Friend)</div><div style="font-size:11px;color:var(--text3)">Spent ₹9,220 this month</div></div><span style="font-size:11px;background:var(--teal-l);color:var(--teal);padding:3px 8px;border-radius:10px">Member</span></div>
             </div>
           </div>
           <div class="card">
@@ -704,7 +704,7 @@ button,input,select,textarea{font-family:var(--ff)}
 
 <script>
 /* ===== DATA ===== */
-let currentUser = { name:'Priya Sharma', type:'Employee', email:'priya@email.com' };
+let currentUser = { name:'Kshitija Patil', type:'Student', email:'kshitija@email.com' };
 let apiKey = '';
 let transactions = [
   {id:1, icon:'🍽', cat:'Food & Dining', note:'Lunch with friends', amt:-450, date:'14 Apr', bg:'var(--pink-l)'},
@@ -735,11 +735,11 @@ function doLogin(){
   const e=document.getElementById('login-email').value.trim();
   const p=document.getElementById('login-password').value;
   if(!e||!p){showToast('Please fill in all fields','error');return;}
-  currentUser={name:'Priya Sharma',type:'Employee',email:e};
+  currentUser={name:'Kshitija Patil',type:'Student',email:e};
   launchApp();
 }
 function demoLogin(){
-  currentUser={name:'Priya Sharma',type:'Employee',email:'demo@smartbudget.in'};
+  currentUser={name:'Kshitija Patil',type:'Student',email:'demo@smartbudget.in'};
   launchApp();
 }
 function doSignup(){
